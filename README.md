@@ -10,6 +10,26 @@ The repository collects the early project background and research, firmware, har
 
 本仓库包含项目早期背景与调研、固件、硬件资料、服务器文件和 PC 控制代码。它的目的不是展示一个已经商业化的成品，而是让下一位接手者能够较快了解整个通信部分，并在此基础上继续开发。修改某一部分之前，建议先阅读对应文件夹内的资料。
 
+## Repository Structure
+
+The folders below contain the main project materials. The root README is deliberately the only README file in the repository so that project information remains in one place.
+
+以下文件夹包含项目的主要资料。为避免说明分散，本仓库只保留这一份根目录 README，所有整体信息集中在此处。
+
+| Folder | Contents |
+| --- | --- |
+| `before get started/` | Project background, posters, early research, and design investigation. |
+| `firmware/` | STM32 F1 main firmware and the early H7 prototype. |
+| `hardware/` | 4G module materials, AGV interface specifications, and expansion-board PCB files. |
+| `pc control/` | Python MQTT control script and related PC-side material. |
+
+| 文件夹 | 内容 |
+| --- | --- |
+| `before get started/` | 项目背景、海报、早期调研和方案设计资料。 |
+| `firmware/` | STM32 F1 主固件和早期 H7 原型。 |
+| `hardware/` | 4G 模块资料、AGV 接口规范和扩展底座 PCB 文件。 |
+| `pc control/` | Python MQTT 控制脚本及 PC 端相关资料。 |
+
 ## System Overview
 
 The PC control program and the smart traffic cone communication module are both connected to an MQTT Broker. A command published by the PC is received by the Yinerda M100M 4G DTU, transparently forwarded to an STM32, converted into an AGV control frame, and finally sent to the AGV chassis.
@@ -219,26 +239,6 @@ The newline is important because the F1 firmware uses it to determine the end of
 The format above is the current PC-to-STM32 input. Any change to the binary AGV frame must follow the material in `hardware/interface specification/`.
 
 以上格式是当前 PC 到 STM32 的输入命令格式。若要修改 AGV 二进制控制帧，必须以 `hardware/interface specification/` 中的资料为准。
-
-## Repository Structure
-
-The folders below contain the main project materials. The root README is deliberately the only README file in the repository so that project information remains in one place.
-
-以下文件夹包含项目的主要资料。为避免说明分散，本仓库只保留这一份根目录 README，所有整体信息集中在此处。
-
-| Folder | Contents |
-| --- | --- |
-| `before get started/` | Project background, posters, early research, and design investigation. |
-| `firmware/` | STM32 F1 main firmware and the early H7 prototype. |
-| `hardware/` | 4G module materials, AGV interface specifications, and expansion-board PCB files. |
-| `pc control/` | Python MQTT control script and related PC-side material. |
-
-| 文件夹 | 内容 |
-| --- | --- |
-| `before get started/` | 项目背景、海报、早期调研和方案设计资料。 |
-| `firmware/` | STM32 F1 主固件和早期 H7 原型。 |
-| `hardware/` | 4G 模块资料、AGV 接口规范和扩展底座 PCB 文件。 |
-| `pc control/` | Python MQTT 控制脚本及 PC 端相关资料。 |
 
 ## Suggested Starting Procedure
 
