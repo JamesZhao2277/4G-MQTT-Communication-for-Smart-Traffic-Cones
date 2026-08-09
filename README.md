@@ -22,7 +22,7 @@ flowchart LR
     Broker -->|4G / MQTT| DTU[Yinerda M100M 4G DTU]
     DTU -->|UART| MCU[STM32]
     MCU -->|UART| AGV[AGV Chassis]
-    MCU -.->|Debug (UART)| Debug[Debug Terminal]
+    MCU -.->|"Debug (UART)"| Debug[Debug Terminal]
 ```
 
 The 4G + MQTT communication path has been tested as a research prototype. However, the project should still be treated as an engineering prototype: every new hardware setup, server configuration, and firmware change needs to be tested again before controlling a real vehicle.
