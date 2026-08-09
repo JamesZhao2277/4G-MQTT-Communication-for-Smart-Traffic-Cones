@@ -79,9 +79,15 @@ Two implementation versions are included in `firmware/`. The H750/H7 version is 
 
 `firmware/` 中保留了两套实现方案。H750/H7 版本属于早期原型，工程更复杂、成本也更高，不推荐作为后续开发的基础；F1 版本成本较低，并包含当前主要验证过的通信链路，因此推荐从 F1 版本继续开发。
 
-In this project, the STM32 works mainly as a data relay. The control path uses one USART to receive text commands transparently forwarded by the Yinerda M100M 4G DTU and another USART to send binary control frames to the AGV. A third USART is reserved for serial debug output during testing.
+In this project, the STM32 works mainly as a data relay. The USART responsibilities are summarised below.
 
-在本项目中，STM32 主要承担数据中转的作用。控制链路使用一个 USART 接收银达尔 Yinerda M100M 4G DTU 透传下来的文本命令，再使用另一个 USART 向 AGV 发送二进制控制帧；此外，还配置了第三个 USART 用于实验过程中的串口调试输出。
+在本项目中，STM32 主要承担数据中转的作用。三个 USART 的职责如下表所示。
+
+| USART | Function | 功能 |
+| --- | --- | --- |
+| USART1 | Outputs serial debug logs during testing. | 在测试过程中输出串口调试日志。 |
+| USART2 | Sends binary control frames to the AGV. | 向 AGV 发送二进制控制帧。 |
+| USART3 | Receives MQTT command text transparently forwarded by the Yinerda M100M 4G DTU. | 接收银达尔 Yinerda M100M 4G DTU 透传下来的 MQTT 命令文本。 |
 
 For the F1 version, USART1 outputs debug logs, USART2 sends binary AGV control frames, and USART3 receives the MQTT command text forwarded by the DTU. Developers who are already familiar with STM32 can configure these interfaces according to the project requirements; beginners should first study basic STM32 UART configuration material before making changes.
 
