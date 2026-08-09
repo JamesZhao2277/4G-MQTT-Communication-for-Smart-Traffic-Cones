@@ -18,8 +18,8 @@
 *.lst
 
 # Keil build outputs
-/firmware/STM32 F1 Version/f1version program/F1/MDK-ARM/F1/
-/firmware/STM32 H7 Version/f7 program/MDK-ARM/test/
+/firmware/STM32 F1 Version/MDK-ARM/F1/
+/firmware/STM32 H7 Version/MDK-ARM/test/
 
 # Third-party software distributions
 /server/
