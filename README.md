@@ -12,17 +12,17 @@ The repository collects the early project background and research, firmware, har
 
 ## System Overview
 
-The PC control program and the smart traffic cone communication module are both connected to an MQTT Broker. A command published by the PC is received by the M100M 4G DTU, transparently forwarded to an STM32, converted into an AGV control frame, and finally sent to the AGV chassis.
+The PC control program and the smart traffic cone communication module are both connected to an MQTT Broker. A command published by the PC is received by the Yinerda M100M 4G DTU, transparently forwarded to an STM32, converted into an AGV control frame, and finally sent to the AGV chassis.
 
-在该通信系统中，PC 控制程序和智能交通锥的通信模块都连接到 MQTT 服务器。PC 发布的控制命令会由 M100M 4G DTU 接收并透传给 STM32，STM32 再将文本命令转换为 AGV 所需的控制帧，最后发送到 AGV 底盘。
+在该通信系统中，PC 控制程序和智能交通锥的通信模块都连接到 MQTT 服务器。PC 发布的控制命令会由银达尔 Yinerda M100M 4G DTU 接收并透传给 STM32，STM32 再将文本命令转换为 AGV 所需的控制帧，最后发送到 AGV 底盘。
 
 ```mermaid
 flowchart LR
     PC[PC Python Controller] -->|MQTT Publish| Broker[EMQX Broker]
-    Broker -->|4G / MQTT| DTU[M100M 4G DTU]
+    Broker -->|4G / MQTT| DTU[Yinerda M100M 4G DTU]
     DTU -->|UART| MCU[STM32]
     MCU -->|UART| AGV[AGV Chassis]
-    MCU -.->|Debug| Debug[Debug Terminal]
+    MCU -.->|Debug (UART)| Debug[Debug Terminal]
 ```
 
 The 4G + MQTT communication path has been tested as a research prototype. However, the project should still be treated as an engineering prototype: every new hardware setup, server configuration, and firmware change needs to be tested again before controlling a real vehicle.
@@ -38,22 +38,32 @@ The current communication path uses the following components:
 | Part | Implementation |
 | --- | --- |
 | PC control | A Python script publishes control messages to MQTT. |
-| MQTT server | EMQX is used as the MQTT Broker. |
-| 4G communication | A M100M 4G DTU receives MQTT messages and transparently outputs them through UART. |
+| MQTT server | EMQX is deployed on an Alibaba Cloud ECS instance and used as the MQTT Broker. |
+| 4G communication | A Yinerda M100M 4G DTU receives MQTT messages and transparently outputs them through UART. |
 | MCU | STM32F103C8T6 receives the command, validates it, and forwards it to the AGV. |
 | AGV interface | The AGV UART protocol and frame definition are provided in the hardware interface material. |
 
 | 部分 | 实现方式 |
 | --- | --- |
 | PC 控制端 | 使用 Python 脚本向 MQTT 发布控制消息。 |
-| MQTT 服务器 | 使用 EMQX 作为 MQTT Broker。 |
-| 4G 通信 | 使用 M100M 4G DTU 接收 MQTT 消息，并通过 UART 透传输出。 |
+| MQTT 服务器 | 在阿里云 ECS 云服务器上部署 EMQX，作为 MQTT Broker。 |
+| 4G 通信 | 使用银达尔 Yinerda M100M 4G DTU 接收 MQTT 消息，并通过 UART 透传输出。 |
 | MCU | STM32F103C8T6 接收命令、校验命令并转发给 AGV。 |
 | AGV 接口 | AGV 的串口协议和帧定义由硬件接口资料提供。 |
 
 The STM32 is used as a communication and protocol-conversion station. In a future version, it could be replaced by a simpler and lower-cost controller, provided that the replacement has enough UART interfaces and can correctly implement the AGV protocol.
 
 STM32 在本项目中主要起到通信中转和协议转换的作用。未来如果功能需求没有明显增加，也可以使用更简单、成本更低的芯片替代，但前提是该芯片具有足够的 UART 接口，并能够正确实现 AGV 协议。
+
+## Background and Research
+
+The project began from a final-year undergraduate student's graduation project. The poster and background material in `before get started/step1 background for the project/` provide a quick introduction to the original idea and project context.
+
+该项目最初源于一位大四学生的毕业设计。`before get started/step1 background for the project/` 中的海报和背景资料可以帮助读者快速了解项目最初的想法和背景。
+
+As the author was responsible for the communication part, the available approaches were researched in detail before selecting a 4G module + MQTT solution. The investigation and proposed design are retained in `before get started/step2 research/` for reference.
+
+由于作者主要负责通信部分，因此在确定方案前对不同实现方式进行了较为详细的调研，最终选择了 4G 模块 + MQTT 的通信方案。相关调查和方案设计保留在 `before get started/step2 research/` 中，供后续开发参考。
 
 ## Firmware
 
@@ -69,13 +79,13 @@ For the F1 firmware, the three USART interfaces are assigned as follows:
 | --- | --- | --- |
 | USART1 | PA9 TX / PA10 RX, 115200, 8N1 | Outputs debug messages to a USB-to-TTL adapter. |
 | USART2 | PA2 TX / PA3 RX, 460800, 8N1 | Sends binary AGV control frames to the AGV chassis. |
-| USART3 | PB10 TX / PB11 RX, 115200, 8N1 | Receives text commands transparently forwarded from the M100M DTU. |
+| USART3 | PB10 TX / PB11 RX, 115200, 8N1 | Receives text commands transparently forwarded from the Yinerda M100M DTU. |
 
 | 串口 | 引脚和参数 | 当前用途 |
 | --- | --- | --- |
 | USART1 | PA9 TX / PA10 RX，115200，8N1 | 向 USB-TTL 输出调试信息。 |
 | USART2 | PA2 TX / PA3 RX，460800，8N1 | 向 AGV 底盘发送二进制控制帧。 |
-| USART3 | PB10 TX / PB11 RX，115200，8N1 | 接收 M100M DTU 透传下来的文本控制命令。 |
+| USART3 | PB10 TX / PB11 RX，115200，8N1 | 接收银达尔 Yinerda M100M DTU 透传下来的文本控制命令。 |
 
 In the current application code, USART1 is actively used for debug output, USART2 is actively used to send AGV frames, and USART3 is actively used to receive DTU commands. Although all three interfaces are configured as TX/RX in STM32CubeMX, the reverse data paths are not yet connected to the application logic.
 
@@ -162,13 +172,13 @@ The folders below contain the main project materials. The root README is deliber
 1. Read the project background and research in `before get started/` to understand why MQTT and a 4G DTU were selected.
 2. Start from the STM32 F1 version, not from the H7 prototype.
 3. Read `docs/protocol.md` and the AGV interface material before modifying the command format or frame structure.
-4. Configure the MQTT Broker, PC script, and M100M DTU with matching topics, different Client IDs, and new credentials.
+4. Configure the MQTT Broker, PC script, and Yinerda M100M DTU with matching topics, different Client IDs, and new credentials.
 5. Test the DTU UART link first, then the STM32 debug output, then the USART2 AGV frame, and only then connect the AGV for a controlled test.
 
 1. 先阅读 `before get started/` 中的背景和调研资料，了解为什么最终选择 MQTT 和 4G DTU 的方案。
 2. 后续开发应从 STM32 F1 版本开始，而不是从 H7 原型开始。
 3. 修改命令格式或帧结构前，应先阅读 `docs/protocol.md` 和 AGV 接口资料。
-4. 配置 MQTT Broker、PC 脚本和 M100M DTU 时，应保证 Topic 一致、Client ID 不重复，并使用新的账号密码。
+4. 配置 MQTT Broker、PC 脚本和银达尔 Yinerda M100M DTU 时，应保证 Topic 一致、Client ID 不重复，并使用新的账号密码。
 5. 应先测试 DTU 串口链路，再测试 STM32 调试输出，然后观察 USART2 AGV 帧，最后才连接 AGV 做受控测试。
 
 The PC control script is located at:
