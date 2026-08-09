@@ -147,9 +147,36 @@ The basic deployment process is as follows:
 | 5. Check Dashboard / 检查 Dashboard | Use the EMQX Dashboard to manage and monitor the MQTT Broker. Keep its address and login credentials private. / 使用 EMQX Dashboard 管理和监控 MQTT Broker，并妥善保管后台地址和登录凭据。 |
 | 6. Test from PC / 从 PC 测试 | Use MQTTX or another MQTT client to verify that the local PC can connect, publish, and subscribe as expected. / 使用 MQTTX 或其他 MQTT 客户端，验证本地 PC 能够正常连接、发布和订阅。 |
 
-The server must be set up before finalising the DTU network-channel configuration, because the DTU needs the correct Broker address, port, account, password, Client ID, and Topic. Never commit real server addresses, credentials, certificates, or dashboard login details to a public repository.
+The important inbound TCP ports used in the historical ECS configuration are listed below. Do not expose management ports to every IP address unless there is a specific reason; restrict them to trusted IP addresses whenever possible.
 
-DTU 的网络通道配置依赖服务器，因此应先完成服务器部署：DTU 需要正确的 Broker 地址、端口、账号、密码、Client ID 和 Topic。不要把真实服务器地址、账号密码、证书或 Dashboard 登录信息提交到公开仓库。
+历史 ECS 配置中使用的重要入方向 TCP 端口如下表所示。管理端口不应在没有明确理由时向所有 IP 地址开放，条件允许时应限制为可信 IP 地址访问。
+
+| Port / 端口 | Service / 服务 | Purpose / 用途 | Access recommendation / 访问建议 |
+| --- | --- | --- | --- |
+| `1883` | MQTT over TCP | Main MQTT connection for the PC controller and the DTU. / PC 控制端和 DTU 的主要 MQTT 连接。 | Required for the current communication path. / 当前通信链路必需。 |
+| `8083` | MQTT over WebSocket | MQTT connection for browser or WebSocket clients. / 供浏览器或 WebSocket 客户端使用的 MQTT 连接。 | Optional; the current Python + DTU path does not require it. / 可选，当前 Python + DTU 链路不需要。 |
+| `18083` | EMQX Dashboard | Browser-based management and monitoring of EMQX. / 通过浏览器管理和监控 EMQX。 | Restrict to trusted IP addresses or a VPN. / 应限制为可信 IP 或 VPN 访问。 |
+| `22` | SSH | Remote command-line administration. / 远程命令行管理。 | Needed only when SSH administration is used; restrict the source IP. / 仅在使用 SSH 管理时需要，应限制来源 IP。 |
+| `3389` | RDP | Remote desktop access for the Windows ECS instance. / Windows ECS 的远程桌面访问。 | Restrict to trusted IP addresses. / 应限制为可信 IP 地址。 |
+
+For the historical Windows deployment, EMQX 5.3.2 is retained under `server/emqx-5.3.2-windows-amd64/`. A brief installation and startup procedure is:
+
+对于历史 Windows 部署，仓库中保留了 `server/emqx-5.3.2-windows-amd64/` 下的 EMQX 5.3.2。简要的安装与启动步骤如下：
+
+1. Extract the EMQX package to the Windows ECS instance, preferably to a short path such as `C:\emqx`. / 将 EMQX 安装包解压到 Windows ECS，建议使用 `C:\emqx` 这类较短的路径。
+2. Open PowerShell in the `bin` directory and start EMQX. / 在 `bin` 目录打开 PowerShell，并启动 EMQX：
+
+   ```powershell
+   .\emqx.cmd start
+   .\emqx.cmd status
+   ```
+
+3. Open `http://<ECS_PUBLIC_IP>:18083` in a browser, complete the Dashboard login setup, and then configure listeners, authentication, and access rules. / 在浏览器中打开 `http://<ECS_PUBLIC_IP>:18083`，完成 Dashboard 登录设置，再配置监听端口、认证和访问规则。
+4. Use MQTTX to connect to port `1883`, then confirm that publishing and subscribing work before configuring the DTU. / 使用 MQTTX 连接 `1883` 端口，确认发布和订阅正常后，再配置 DTU。
+
+The server must be set up before finalising the DTU network-channel configuration, because the DTU needs the correct Broker address, port, account, password, Client ID, and Topic.
+
+DTU 的网络通道配置依赖服务器，因此应先完成服务器部署：DTU 需要正确的 Broker 地址、端口、账号、密码、Client ID 和 Topic。
 
 ## Control Message Format
 
