@@ -159,9 +159,9 @@ The important inbound TCP ports used in the historical ECS configuration are lis
 | `22` | SSH | Remote command-line administration. / 远程命令行管理。 | Needed only when SSH administration is used; restrict the source IP. / 仅在使用 SSH 管理时需要，应限制来源 IP。 |
 | `3389` | RDP | Remote desktop access for the Windows ECS instance. / Windows ECS 的远程桌面访问。 | Restrict to trusted IP addresses. / 应限制为可信 IP 地址。 |
 
-For the historical Windows deployment, EMQX 5.3.2 is retained under `server/emqx-5.3.2-windows-amd64/`. A brief installation and startup procedure is:
+The EMQX installation package is not included in this repository. Download a Windows release from the [official EMQX download page](https://www.emqx.com/en/try?product=broker), then follow the brief installation and startup procedure below:
 
-对于历史 Windows 部署，仓库中保留了 `server/emqx-5.3.2-windows-amd64/` 下的 EMQX 5.3.2。简要的安装与启动步骤如下：
+本仓库不提供 EMQX 安装包。请读者前往 [EMQX 官方下载页面](https://www.emqx.com/en/try?product=broker)自行下载适用于 Windows 的版本，然后参考以下步骤完成安装与启动：
 
 1. Extract the EMQX package to the Windows ECS instance, preferably to a short path such as `C:\emqx`. / 将 EMQX 安装包解压到 Windows ECS，建议使用 `C:\emqx` 这类较短的路径。
 2. Open PowerShell in the `bin` directory and start EMQX. / 在 `bin` 目录打开 PowerShell，并启动 EMQX：
@@ -232,7 +232,6 @@ The folders below contain the main project materials. The root README is deliber
 | `firmware/` | STM32 F1 main firmware and the early H7 prototype. |
 | `hardware/` | 4G module materials, AGV interface specifications, and expansion-board PCB files. |
 | `pc control/` | Python MQTT control script and related PC-side material. |
-| `server/` | EMQX server files and historical deployment material. |
 | `images/` | A place for system diagrams, wiring photographs, test screenshots, and other documentation images. |
 
 | 文件夹 | 内容 |
@@ -241,7 +240,6 @@ The folders below contain the main project materials. The root README is deliber
 | `firmware/` | STM32 F1 主固件和早期 H7 原型。 |
 | `hardware/` | 4G 模块资料、AGV 接口规范和扩展底座 PCB 文件。 |
 | `pc control/` | Python MQTT 控制脚本及 PC 端相关资料。 |
-| `server/` | EMQX 服务器文件和历史部署资料。 |
 | `images/` | 用于存放系统结构图、接线照片、测试截图及其他说明图片。 |
 
 ## Suggested Starting Procedure
