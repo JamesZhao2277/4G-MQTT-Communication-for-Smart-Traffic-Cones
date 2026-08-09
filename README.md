@@ -232,7 +232,6 @@ The folders below contain the main project materials. The root README is deliber
 | `firmware/` | STM32 F1 main firmware and the early H7 prototype. |
 | `hardware/` | 4G module materials, AGV interface specifications, and expansion-board PCB files. |
 | `pc control/` | Python MQTT control script and related PC-side material. |
-| `images/` | A place for system diagrams, wiring photographs, test screenshots, and other documentation images. |
 
 | 文件夹 | 内容 |
 | --- | --- |
@@ -240,21 +239,28 @@ The folders below contain the main project materials. The root README is deliber
 | `firmware/` | STM32 F1 主固件和早期 H7 原型。 |
 | `hardware/` | 4G 模块资料、AGV 接口规范和扩展底座 PCB 文件。 |
 | `pc control/` | Python MQTT 控制脚本及 PC 端相关资料。 |
-| `images/` | 用于存放系统结构图、接线照片、测试截图及其他说明图片。 |
 
 ## Suggested Starting Procedure
 
 1. Read the project background and research in `before get started/` to understand why MQTT and a 4G DTU were selected.
+
+   先阅读 `before get started/` 中的背景和调研资料，了解为什么最终选择 MQTT 和 4G DTU 的方案。
+
 2. Start from the STM32 F1 version, not from the H7 prototype.
+
+   后续开发应从 STM32 F1 版本开始，而不是从 H7 原型开始。
+
 3. Read the AGV interface material in `hardware/interface specification/` before modifying the command format or frame structure.
+
+   修改命令格式或帧结构前，应先阅读 `hardware/interface specification/` 中的 AGV 接口资料。
+
 4. Configure the MQTT Broker, PC script, and Yinerda M100M DTU with matching topics, different Client IDs, and new credentials.
+
+   配置 MQTT Broker、PC 脚本和银达尔 Yinerda M100M DTU 时，应保证 Topic 一致、Client ID 不重复，并使用新的账号密码。
+
 5. Test the DTU UART link first, then the STM32 debug output, then the USART2 AGV frame, and only then connect the AGV for a controlled test.
 
-1. 先阅读 `before get started/` 中的背景和调研资料，了解为什么最终选择 MQTT 和 4G DTU 的方案。
-2. 后续开发应从 STM32 F1 版本开始，而不是从 H7 原型开始。
-3. 修改命令格式或帧结构前，应先阅读 `hardware/interface specification/` 中的 AGV 接口资料。
-4. 配置 MQTT Broker、PC 脚本和银达尔 Yinerda M100M DTU 时，应保证 Topic 一致、Client ID 不重复，并使用新的账号密码。
-5. 应先测试 DTU 串口链路，再测试 STM32 调试输出，然后观察 USART2 AGV 帧，最后才连接 AGV 做受控测试。
+   应先测试 DTU 串口链路，再测试 STM32 调试输出，然后观察 USART2 AGV 帧，最后才连接 AGV 做受控测试。
 
 The PC control script is located at:
 
@@ -273,9 +279,9 @@ py -m pip install -U paho-mqtt
 py pc_auto_sender.py
 ```
 
-Before running, replace any historical Broker address, username, password, Client ID, and Topic in the configuration section with values for the current deployment. Do not upload real credentials, tokens, IMEI values, SIM information, certificates, or server logs to a public repository.
+Before running, replace any historical Broker address, username, password, Client ID, and Topic in the configuration section with values for the current deployment.
 
-运行前，应把脚本配置区中的历史 Broker 地址、账号、密码、Client ID 和 Topic 替换为当前部署所使用的值。不要把真实账号密码、Token、IMEI、SIM 信息、证书或服务器日志上传到公开仓库。
+运行前，应把脚本配置区中的历史 Broker 地址、账号、密码、Client ID 和 Topic 替换为当前部署所使用的值。
 
 ## Testing and Safety
 
