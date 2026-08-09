@@ -67,29 +67,25 @@ As the author was responsible for the communication part, the available approach
 
 ## Firmware
 
-Two STM32 versions are included in `firmware/`. The STM32F103C8T6 F1 version is the recommended version because it is cheaper, simpler, and contains the main validated command path. The STM32H750 H7 version is an early prototype retained for reference only.
+The author focused on implementing the communication function rather than building a complete general-purpose firmware framework. The source code is therefore provided as a functional reference and still needs further integration and optimisation before it can be used in an industrial setting.
 
-`firmware/` 文件夹中保留了两个 STM32 版本。STM32F103C8T6 的 F1 版本成本更低、实现更简单，并且包含当前主要验证过的控制链路，因此推荐后续开发继续使用 F1 版本。STM32H750 的 H7 版本属于早期原型，仅保留作参考。
+作者主要负责通信功能的实现，而不是构建一套完整的通用固件框架。因此，本工程代码主要作为功能实现参考；若要应用于实际工业场景，仍需要后续的整合与优化。
 
-For the F1 firmware, the three USART interfaces are assigned as follows:
+For further STM32 development, STM32CubeMX + Keil is recommended for peripheral configuration, project management, building, and flashing. Keil can also be integrated with VS Code as an editing environment, while Codex can assist with code reading, modification, and routine development work. Any change to the hardware configuration must still be verified on the physical system.
 
-对于 F1 固件，三个 USART 的分配如下：
+后续进行 STM32 开发时，建议使用 STM32CubeMX + Keil 完成外设配置、工程管理、编译和烧录；也可以将 Keil 与 VS Code 配合，作为更方便的代码编辑环境，并充分利用 Codex 辅助阅读、修改和编写代码。但凡涉及硬件配置的修改，仍需要在实际系统上完成验证。
 
-| Interface | Pins and settings | Current role |
-| --- | --- | --- |
-| USART1 | PA9 TX / PA10 RX, 115200, 8N1 | Outputs debug messages to a USB-to-TTL adapter. |
-| USART2 | PA2 TX / PA3 RX, 460800, 8N1 | Sends binary AGV control frames to the AGV chassis. |
-| USART3 | PB10 TX / PB11 RX, 115200, 8N1 | Receives text commands transparently forwarded from the Yinerda M100M DTU. |
+Two implementation versions are included in `firmware/`. The H750/H7 version is an early prototype: it is more complicated and more expensive, so it is not recommended for continued development. The F1 version is lower-cost and contains the main validated communication path, so it is the recommended starting point.
 
-| 串口 | 引脚和参数 | 当前用途 |
-| --- | --- | --- |
-| USART1 | PA9 TX / PA10 RX，115200，8N1 | 向 USB-TTL 输出调试信息。 |
-| USART2 | PA2 TX / PA3 RX，460800，8N1 | 向 AGV 底盘发送二进制控制帧。 |
-| USART3 | PB10 TX / PB11 RX，115200，8N1 | 接收银达尔 Yinerda M100M DTU 透传下来的文本控制命令。 |
+`firmware/` 中保留了两套实现方案。H750/H7 版本属于早期原型，工程更复杂、成本也更高，不推荐作为后续开发的基础；F1 版本成本较低，并包含当前主要验证过的通信链路，因此推荐从 F1 版本继续开发。
 
-In the current application code, USART1 is actively used for debug output, USART2 is actively used to send AGV frames, and USART3 is actively used to receive DTU commands. Although all three interfaces are configured as TX/RX in STM32CubeMX, the reverse data paths are not yet connected to the application logic.
+In this project, the STM32 works mainly as a data relay. The control path uses one USART to receive text commands transparently forwarded by the Yinerda M100M 4G DTU and another USART to send binary control frames to the AGV. A third USART is reserved for serial debug output during testing.
 
-在当前应用代码中，USART1 实际用于调试输出，USART2 实际用于发送 AGV 帧，USART3 实际用于接收 DTU 命令。虽然三个串口都在 STM32CubeMX 中配置为 TX/RX 模式，但反向数据链路暂时没有接入应用层逻辑。
+在本项目中，STM32 主要承担数据中转的作用。控制链路使用一个 USART 接收银达尔 Yinerda M100M 4G DTU 透传下来的文本命令，再使用另一个 USART 向 AGV 发送二进制控制帧；此外，还配置了第三个 USART 用于实验过程中的串口调试输出。
+
+For the F1 version, USART1 outputs debug logs, USART2 sends binary AGV control frames, and USART3 receives the MQTT command text forwarded by the DTU. Developers who are already familiar with STM32 can configure these interfaces according to the project requirements; beginners should first study basic STM32 UART configuration material before making changes.
+
+对于 F1 版本，USART1 用于输出调试日志，USART2 用于向 AGV 发送二进制控制帧，USART3 用于接收 DTU 透传下来的 MQTT 命令文本。熟悉 STM32 的开发者可以根据项目需要自行配置这些串口；如果对 STM32 不熟悉，建议先学习基础的 UART 配置资料后再进行修改。
 
 The F1 Keil project is located at:
 
