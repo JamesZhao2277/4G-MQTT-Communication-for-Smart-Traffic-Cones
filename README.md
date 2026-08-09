@@ -93,6 +93,37 @@ For the F1 version, USART1 outputs debug logs, USART2 sends binary AGV control f
 
 对于 F1 版本，USART1 用于输出调试日志，USART2 用于向 AGV 发送二进制控制帧，USART3 用于接收 DTU 透传下来的 MQTT 命令文本。熟悉 STM32 的开发者可以根据项目需要自行配置这些串口；如果对 STM32 不熟悉，建议先学习基础的 UART 配置资料后再进行修改。
 
+## Hardware
+
+The hardware communication path uses the Yinerda M100M 4G DTU, which is based on the Hezhou Air780E 4G module and communicates with the STM32 through UART. It is used in transparent-transmission mode: after receiving a command from the network, it forwards the payload to the STM32 without interpreting the application data itself.
+
+硬件通信链路使用银达尔 Yinerda M100M 4G DTU，该设备基于合宙 Air780E 4G 模块，并通过 UART 与 STM32 通信。它工作在数据透明传输模式：从网络接收到命令后，不对应用数据本身进行处理，而是将消息内容直接转发给 STM32。
+
+The vendor documentation explains the operating principle and configuration process. Read the [Yinerda DTU guide](https://yinerda.yuque.com/yt1fh6/4gdtu/qpk0i4go2d5dlhnh) before changing parameters; when necessary, contact the vendor's technical support for the exact device revision in use.
+
+厂家资料对工作原理和配置过程有更详细的说明。修改参数前，建议先阅读 [银达尔 DTU 官方资料](https://yinerda.yuque.com/yt1fh6/4gdtu/qpk0i4go2d5dlhnh)；如遇到与具体设备版本有关的问题，也可以联系厂家技术支持确认。
+
+Configure the DTU through the [Yinerda DTU configuration platform](https://dtu.yinerda.com). The MQTT configuration test examples supplied with the module are useful for the first setup and verification.
+
+DTU 需要通过 [银达尔 DTU 配置平台](https://dtu.yinerda.com) 设置参数。模块配套的 MQTT 配置测试示例适合用于首次配置和验证。
+
+| Configuration area / 配置项目 | Main contents / 主要内容 |
+| --- | --- |
+| UART settings / 串口参数 | Set the UART link used to transparently forward messages between the DTU and STM32. / 设置 DTU 与 STM32 之间用于消息透传的串口连接。 |
+| Network channel / 网络通道参数 | Select the communication protocol, server address, and MQTT parameters such as Client ID, account, password, and Topic. / 设置通信协议、服务器地址，以及 Client ID、账号、密码和 Topic 等 MQTT 参数。 |
+
+Some DTU network-channel settings depend on the MQTT server, so the server should be deployed and its connection information confirmed before completing the DTU configuration.
+
+DTU 的部分网络通道参数依赖于 MQTT 服务器，因此应先完成服务器部署并确认连接信息，再完成 DTU 配置。
+
+For the connection between the STM32 and the AGV baseboard, the required data-handling method and serial protocol are provided by the AGV supplier. Refer to `hardware/interface specification/` and implement the frame processing according to the supplied protocol.
+
+对于 STM32 与 AGV 底板的连接，企业已经提供了相应的数据处理方式和串口协议。请查阅 `hardware/interface specification/` 中的资料，并按照规定的协议处理数据帧。
+
+To make the communication module more compact, a baseboard PCB was designed in JLCEDA and its project files are stored in `hardware/expansion board/`. The current board mainly provides wiring for the three USART interfaces. An independent power system was considered but not completed; the prototype is currently powered by a power bank. Designing a compact and safe dedicated power system is a useful direction for future work.
+
+为了使通信模块更加紧凑，作者使用嘉立创 EDA 设计了一个底座 PCB，工程文件保存在 `hardware/expansion board/` 中。当前底座主要提供三个 USART 的接线；独立供电系统曾被考虑，但尚未完成，原型目前使用充电宝供电。后续若能设计一套紧凑、安全的专用供电系统，将会是很有价值的优化方向。
+
 ## Control Message Format
 
 The PC script publishes one newline-terminated CSV command. The STM32 accepts the command only when it contains exactly five valid fields in the following order:
