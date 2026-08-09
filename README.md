@@ -236,7 +236,7 @@ The PC control script is located at:
 PC 控制脚本位于：
 
 ```text
-pc control/Python_Control/pc_send/pc_auto_sender.py
+pc control/pc_auto_sender.py
 ```
 
 Install its dependency and run it from the script directory:
