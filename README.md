@@ -93,14 +93,6 @@ For the F1 version, USART1 outputs debug logs, USART2 sends binary AGV control f
 
 对于 F1 版本，USART1 用于输出调试日志，USART2 用于向 AGV 发送二进制控制帧，USART3 用于接收 DTU 透传下来的 MQTT 命令文本。熟悉 STM32 的开发者可以根据项目需要自行配置这些串口；如果对 STM32 不熟悉，建议先学习基础的 UART 配置资料后再进行修改。
 
-The F1 Keil project is located at:
-
-F1 版本的 Keil 工程位于：
-
-```text
-firmware/STM32 F1 Version/f1version program/F1/MDK-ARM/F1.uvprojx
-```
-
 ## Control Message Format
 
 The PC script publishes one newline-terminated CSV command. The STM32 accepts the command only when it contains exactly five valid fields in the following order:
