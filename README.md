@@ -16,24 +16,13 @@ The PC control program and the smart traffic cone communication module are both 
 
 在该通信系统中，PC 控制程序和智能交通锥的通信模块都连接到 MQTT 服务器。PC 发布的控制命令会由 M100M 4G DTU 接收并透传给 STM32，STM32 再将文本命令转换为 AGV 所需的控制帧，最后发送到 AGV 底盘。
 
-```text
-PC Python controller
-        |
-        | MQTT publish
-        v
-     EMQX Broker
-        |
-        | 4G / MQTT
-        v
-    M100M 4G DTU
-        |
-        | UART, 115200 baud
-        v
-  STM32F103C8T6
-        |
-        | UART, 460800 baud
-        v
-     UNNC AGV chassis
+```mermaid
+flowchart LR
+    PC[PC Python Controller] -->|MQTT Publish| Broker[EMQX Broker]
+    Broker -->|4G / MQTT| DTU[M100M 4G DTU]
+    DTU -->|UART| MCU[STM32]
+    MCU -->|UART| AGV[AGV Chassis]
+    MCU -.->|Debug| Debug[Debug Terminal]
 ```
 
 The 4G + MQTT communication path has been tested as a research prototype. However, the project should still be treated as an engineering prototype: every new hardware setup, server configuration, and firmware change needs to be tested again before controlling a real vehicle.
