@@ -124,6 +124,33 @@ To make the communication module more compact, a baseboard PCB was designed in J
 
 为了使通信模块更加紧凑，作者使用嘉立创 EDA 设计了一个底座 PCB，工程文件保存在 `hardware/expansion board/` 中。当前底座主要提供三个 USART 的接线；独立供电系统曾被考虑，但尚未完成，原型目前使用充电宝供电。后续若能设计一套紧凑、安全的专用供电系统，将会是很有价值的优化方向。
 
+## Server
+
+The server part uses a mature cloud service rather than self-hosted hardware. An Alibaba Cloud ECS instance was selected because it provides a public IP address and a relatively stable environment for deploying the MQTT Broker.
+
+服务器部分使用成熟的云服务，而不是自行搭建物理服务器。项目选择阿里云 ECS 云服务器，是因为它能够提供公网 IP，并为 MQTT Broker 的部署提供相对稳定的运行环境。
+
+This was the author's first cloud-server deployment, so the historical setup was completed by combining official documentation, online resources, and AI-assisted learning. The exact configuration should be treated as a reference rather than a production template; future developers should continue to consult current official documentation when maintaining or extending the server.
+
+这也是作者第一次部署云服务器，因此历史配置主要通过官方资料、网络资源和 AI 辅助学习逐步完成。现有配置应作为参考，而不是可直接用于生产环境的模板；后续维护或扩展服务器时，仍应结合最新的官方资料继续学习和确认。
+
+The basic deployment process is as follows:
+
+大致的部署流程如下：
+
+| Step / 步骤 | Action / 操作 |
+| --- | --- |
+| 1. Create ECS / 创建 ECS | Purchase and configure an Alibaba Cloud ECS instance to obtain a public IP address. / 购买并配置阿里云 ECS 云服务器，获得公网 IP 地址。 |
+| 2. Configure network access / 配置网络访问 | Open only the required MQTT and management ports in the ECS security group and operating-system firewall. / 在 ECS 安全组和操作系统防火墙中，仅开放 MQTT 和管理所需的端口。 |
+| 3. Install Broker / 安装 Broker | Install an MQTT Broker on the ECS instance. This project uses EMQX. / 在 ECS 上安装 MQTT Broker，本项目使用 EMQX。 |
+| 4. Configure EMQX / 配置 EMQX | Configure listeners, accounts, passwords, Client IDs, Topics, and access-control rules for the PC and DTU. / 配置监听端口、账号密码、Client ID、Topic，以及 PC 与 DTU 的访问控制规则。 |
+| 5. Check Dashboard / 检查 Dashboard | Use the EMQX Dashboard to manage and monitor the MQTT Broker. Keep its address and login credentials private. / 使用 EMQX Dashboard 管理和监控 MQTT Broker，并妥善保管后台地址和登录凭据。 |
+| 6. Test from PC / 从 PC 测试 | Use MQTTX or another MQTT client to verify that the local PC can connect, publish, and subscribe as expected. / 使用 MQTTX 或其他 MQTT 客户端，验证本地 PC 能够正常连接、发布和订阅。 |
+
+The server must be set up before finalising the DTU network-channel configuration, because the DTU needs the correct Broker address, port, account, password, Client ID, and Topic. Never commit real server addresses, credentials, certificates, or dashboard login details to a public repository.
+
+DTU 的网络通道配置依赖服务器，因此应先完成服务器部署：DTU 需要正确的 Broker 地址、端口、账号、密码、Client ID 和 Topic。不要把真实服务器地址、账号密码、证书或 Dashboard 登录信息提交到公开仓库。
+
 ## Control Message Format
 
 The PC script publishes one newline-terminated CSV command. The STM32 accepts the command only when it contains exactly five valid fields in the following order:
