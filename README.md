@@ -262,26 +262,31 @@ The format above is the current PC-to-STM32 input. Any change to the binary AGV 
 
    应先测试 DTU 串口链路，再测试 STM32 调试输出，然后观察 USART2 AGV 帧，最后才连接 AGV 做受控测试。
 
-The PC control script is located at:
+The reusable MQTT interface, integration guide, and manual test scripts are located at:
 
-PC 控制脚本位于：
+可复用 MQTT 接口、接入说明和手动测试脚本位于：
 
 ```text
-pc control/pc_auto_sender.py
+pc control/control_communication_interface/cone_mqtt_controller.py
+pc control/control_communication_interface/PPO_MQTT_接入说明.md
+pc control/test_programme/pc_auto_sender_one_cone.py
+pc control/test_programme/pc_auto_sender_multiple_cones.py
 ```
 
-Install its dependency and run it from the script directory:
+Install the dependency, provide the MQTT password through an environment variable, and run a script from the test directory:
 
-在脚本所在目录安装依赖并运行：
+在测试脚本目录安装依赖，通过环境变量提供 MQTT 密码，然后运行所需脚本：
 
 ```powershell
 py -m pip install -U paho-mqtt
-py pc_auto_sender.py
+$env:MQTT_PASSWORD = "当前 MQTT 密码"
+py pc_auto_sender_one_cone.py
+# 或：py pc_auto_sender_multiple_cones.py
 ```
 
-Before running, replace any historical Broker address, username, password, Client ID, and Topic in the configuration section with values for the current deployment.
+Before running, review the Broker address, username, Client ID, Topic, enabled vehicles, and command values. A non-zero motion command is rejected until `ALLOW_MOTION` is explicitly set to `True`; only enable it after preparing an isolated test area and a physical emergency stop. Do not write the MQTT password into the source file.
 
-运行前，应把脚本配置区中的历史 Broker 地址、账号、密码、Client ID 和 Topic 替换为当前部署所使用的值。
+运行前，应检查 Broker 地址、账号、Client ID、Topic、启用车辆和命令参数。非零运动命令默认会被拒绝；只有在隔离测试区域和物理急停均已准备好后，才能把 `ALLOW_MOTION` 明确改为 `True`。不要把 MQTT 密码写入源文件。
 
 ## Testing and Safety
 
